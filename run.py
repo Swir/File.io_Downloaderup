@@ -1,113 +1,277 @@
-import requests
 import os
-from tqdm import tqdm
-from colorama import Fore, init
+import requests
+from rich.console import Console
+from rich.prompt import Prompt
+from rich.progress import Progress, BarColumn, DownloadColumn, TextColumn, TransferSpeedColumn, TimeRemainingColumn
+from rich.table import Table
+from dotenv import load_dotenv
 
-# Inicjalizacja kolorów
-init(autoreset=True)
+# Wczytanie konfiguracji z pliku .env
+load_dotenv()
 
-# ASCII Art i powitanie
-def show_ascii_art():
-    print(f"{Fore.CYAN}")
-    print("  ______ _ _      _____ ____  ")
-    print(" |  ____(_) |    |_   _/ __ \ ")
-    print(" | |__   _| | ___  | || |  | |")
-    print(" |  __| | | |/ _ \ | || |  | |")
-    print(" | |    | | |  __/_| || |__| |")
-    print(" |_|    |_|_|\___|_____\____/ ")
-    print(f"{Fore.YELLOW}Created by Swir\n")
+# Inicjalizacja konsoli rich
+console = Console()
 
-# Funkcja do logowania historii operacji
-def log_history(action, file_name, link):
-    with open('file_history.txt', 'a') as f:
-        f.write(f"{action}: {file_name} - {link}\n")
+# Stałe
+FILE_HISTORY = 'file_history.txt'
+FILE_IO_URL = os.getenv('FILE_IO_URL', 'https://file.io')
 
-# Funkcja do wysyłania pliku na File.io z paskiem postępu
-def upload_file(file_path):
-    if not os.path.exists(file_path):
-        print(f"{Fore.RED}Error: File '{file_path}' does not exist.")
-        return None
+# Określenie ścieżki do folderu Downloadsio
+PROGRAM_DIR = os.path.dirname(os.path.abspath(__file__))
+DOWNLOADS_FOLDER = os.path.join(PROGRAM_DIR, 'Downloadsio')
 
-    url = 'https://file.io'
-    file_size = os.path.getsize(file_path)
-    print(f"{Fore.YELLOW}Uploading file: {file_path} ...")
 
-    with open(file_path, 'rb') as f, tqdm(
-        total=file_size, unit='B', unit_scale=True, unit_divisor=1024, desc=file_path
-    ) as bar:
-        files = {'file': (os.path.basename(file_path), f)}
-        response = requests.post(url, files=files)
-        bar.update(file_size)
+class FileManager:
+    """
+    Klasa zarządzająca operacjami uploadu i downloadu plików.
+    """
 
-    if response.status_code == 200:
-        data = response.json()
-        if data['success']:
-            download_link = data['link']
-            print(f"{Fore.GREEN}File uploaded successfully! Download link: {Fore.CYAN}{download_link}")
-            log_history('UPLOAD', os.path.basename(file_path), download_link)
-            return download_link
+    @staticmethod
+    def log_history(action: str, file_name: str, link: str):
+        """
+        Loguje historię operacji do pliku.
+        """
+        try:
+            with open(FILE_HISTORY, 'a') as f:
+                f.write(f"{action}: {file_name} - {link}\n")
+        except Exception as e:
+            console.print(f"[red]Failed to log history: {e}[/red]")
+
+    @staticmethod
+    def show_ascii_art():
+        """
+        Wyświetla grafikę ASCII oraz powitanie.
+        """
+        ascii_art = """
+  ______ _ _      _____ ____  
+ |  ____(_) |    |_   _/ __ \ 
+ | |__   _| | ___  | || |  | |
+ |  __| | | |/ _ \ | || |  | |
+ | |    | | |  __/_| || |__| |
+ |_|    |_|_|\___|_____\____/ 
+        """
+        console.print(f"[cyan]{ascii_art}[/cyan]")
+        console.print("[yellow]Created by Swir[/yellow]\n")
+
+    @staticmethod
+    def show_history():
+        """
+        Wyświetla historię operacji.
+        """
+        if not os.path.exists(FILE_HISTORY):
+            console.print("[yellow]No history found.[/yellow]")
+            return
+
+        try:
+            with open(FILE_HISTORY, 'r') as f:
+                history = f.read()
+                if history:
+                    table = Table(title="Operation History")
+                    table.add_column("Action", style="magenta")
+                    table.add_column("File Name", style="cyan")
+                    table.add_column("Link", style="green")
+                    for line in history.strip().split('\n'):
+                        action, rest = line.split(": ", 1)
+                        file_name, link = rest.split(" - ", 1)
+                        table.add_row(action, file_name, link)
+                    console.print(table)
+                else:
+                    console.print("[yellow]History is empty.[/yellow]")
+        except Exception as e:
+            console.print(f"[red]Failed to read history: {e}[/red]")
+
+
+class Uploader:
+    """
+    Klasa odpowiedzialna za upload plików.
+    """
+
+    @staticmethod
+    def upload_file(file_path: str) -> str:
+        """
+        Uploaduje plik na File.io i zwraca link do pobrania.
+        """
+        if not os.path.exists(file_path):
+            console.print(f"[red]Error: File '{file_path}' does not exist.[/red]")
+            return ""
+
+        url = FILE_IO_URL
+        file_size = os.path.getsize(file_path)
+        file_name = os.path.basename(file_path)
+
+        console.print(f"[yellow]Uploading file: {file_path}...[/yellow]")
+
+        try:
+            with open(file_path, 'rb') as f:
+                with Progress(
+                    TextColumn("[progress.description]{task.description}"),
+                    BarColumn(),
+                    "[progress.percentage]{task.percentage:>3.1f}%",
+                    "•",
+                    DownloadColumn(),
+                    "•",
+                    TransferSpeedColumn(),
+                    "•",
+                    TimeRemainingColumn(),
+                    console=console,
+                ) as progress:
+                    task = progress.add_task("Uploading...", total=file_size)
+                    files = {
+                        'file': (file_name, f, 'application/octet-stream')
+                    }
+
+                    def progress_monitor(monitor):
+                        progress.update(task, advance=monitor.bytes_read - progress.tasks[0].completed)
+
+                    response = requests.post(url, files=files)
+
+        except requests.exceptions.RequestException as e:
+            console.print(f"[red]An error occurred during upload: {e}[/red]")
+            return ""
+        except Exception as e:
+            console.print(f"[red]Unexpected error: {e}[/red]")
+            return ""
+
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('success'):
+                download_link = data.get('link', '')
+                console.print(f"[green]File uploaded successfully![/green]")
+                console.print(f"[cyan]Download link: {download_link}[/cyan]")
+                FileManager.log_history('UPLOAD', file_name, download_link)
+                return download_link
+            else:
+                console.print(f"[red]Error during upload: {data.get('message', 'Unknown error')}[/red]")
         else:
-            print(f"{Fore.RED}Error during upload: {data.get('message', 'Unknown error')}")
-            return None
-    else:
-        print(f"{Fore.RED}Upload failed with status code: {response.status_code}")
-        return None
+            console.print(f"[red]Upload failed with status code: {response.status_code}[/red]")
 
-# Funkcja do pobrania pliku z wyświetleniem postępu
-def download_file(download_link, save_path):
-    print(f"{Fore.YELLOW}Downloading file from: {download_link} ...")
-    response = requests.get(download_link, stream=True)
+        return ""
 
-    if response.status_code == 200:
-        total_size = int(response.headers.get('content-length', 0))
-        with open(save_path, 'wb') as file, tqdm(
-            desc=save_path,
-            total=total_size,
-            unit='B',
-            unit_scale=True,
-            unit_divisor=1024,
-        ) as bar:
-            for chunk in response.iter_content(chunk_size=8192):
-                file.write(chunk)
-                bar.update(len(chunk))
-        print(f"{Fore.GREEN}File downloaded and saved as {save_path}")
-        log_history('DOWNLOAD', os.path.basename(save_path), download_link)
-    else:
-        print(f"{Fore.RED}Download failed with status code: {response.status_code}")
 
-# Menu główne
-def main_menu():
-    show_ascii_art()  # Pokazanie grafiki ASCII
-    while True:
-        print(f"\n{Fore.MAGENTA}Select option:")
-        print(f"{Fore.CYAN}1. Upload file to File.io")
-        print(f"{Fore.CYAN}2. Download file from File.io")
-        print(f"{Fore.CYAN}3. Exit")
-        
-        choice = input(f"{Fore.YELLOW}Enter 1, 2, or 3: ")
+class Downloader:
+    """
+    Klasa odpowiedzialna za pobieranie plików.
+    """
 
-        if choice == '1':
-            upload_menu()
-        elif choice == '2':
-            download_menu()
-        elif choice == '3':
-            print(f"{Fore.GREEN}Exiting...")
-            break
-        else:
-            print(f"{Fore.RED}Invalid option, please try again.")
+    @staticmethod
+    def download_file(download_link: str):
+        """
+        Pobiera plik z podanego linku i zapisuje go w folderze Downloadsio.
+        """
+        console.print(f"[yellow]Downloading file from: {download_link}...[/yellow]")
 
-# Menu do uploadu
-def upload_menu():
-    file_path = input(f"{Fore.YELLOW}Enter the path of the file to upload: ")
-    download_link = upload_file(file_path)
-    if download_link:
-        print(f"{Fore.GREEN}Share this link to download the file: {Fore.CYAN}{download_link}")
+        try:
+            response = requests.get(download_link, stream=True)
+            response.raise_for_status()
 
-# Menu do pobierania plików
-def download_menu():
-    download_link = input(f"{Fore.YELLOW}Enter the download link: ")
-    save_path = input(f"{Fore.YELLOW}Enter the path to save the downloaded file: ")
-    download_file(download_link, save_path)
+            total_size = int(response.headers.get('content-length', 0))
+            os.makedirs(DOWNLOADS_FOLDER, exist_ok=True)
+
+            # Automatyczne określenie nazwy pliku z nagłówków lub linku
+            if 'Content-Disposition' in response.headers:
+                # Próbujemy wyciągnąć nazwę pliku z nagłówka
+                content_disp = response.headers.get('Content-Disposition')
+                if 'filename=' in content_disp:
+                    file_name = content_disp.split('filename=')[1].strip('"')
+                else:
+                    file_name = download_link.split('/')[-1]
+            else:
+                file_name = download_link.split('/')[-1]
+
+            save_path = os.path.join(DOWNLOADS_FOLDER, file_name)
+
+            with open(save_path, 'wb') as file:
+                with Progress(
+                    TextColumn("[progress.description]{task.description}"),
+                    BarColumn(),
+                    "[progress.percentage]{task.percentage:>3.1f}%",
+                    "•",
+                    DownloadColumn(),
+                    "•",
+                    TransferSpeedColumn(),
+                    "•",
+                    TimeRemainingColumn(),
+                    console=console,
+                ) as progress:
+                    task = progress.add_task("Downloading...", total=total_size)
+                    for chunk in response.iter_content(chunk_size=8192):
+                        if chunk:
+                            file.write(chunk)
+                            progress.update(task, advance=len(chunk))
+
+            console.print(f"[green]File downloaded and saved as {save_path}[/green]")
+            file_name = os.path.basename(save_path)
+            FileManager.log_history('DOWNLOAD', file_name, download_link)
+        except requests.exceptions.RequestException as e:
+            console.print(f"[red]An error occurred during download: {e}[/red]")
+        except Exception as e:
+            console.print(f"[red]Unexpected error: {e}[/red]")
+
+
+class FileIOApp:
+    """
+    Główna klasa aplikacji zarządzająca interfejsem użytkownika.
+    """
+
+    def __init__(self):
+        self.uploader = Uploader()
+        self.downloader = Downloader()
+
+    def main_menu(self):
+        """
+        Wyświetla główne menu i obsługuje wybór użytkownika.
+        """
+        FileManager.show_ascii_art()
+        while True:
+            console.print("\n[magenta]Select an option:[/magenta]")
+            console.print("[cyan]1. Upload file to File.io[/cyan]")
+            console.print("[cyan]2. Download file from File.io[/cyan]")
+            console.print("[cyan]3. View operation history[/cyan]")
+            console.print("[cyan]4. Exit[/cyan]")
+
+            choice = Prompt.ask("[yellow]Enter 1, 2, 3, or 4[/yellow]")
+
+            if choice == '1':
+                self.upload_menu()
+            elif choice == '2':
+                self.download_menu()
+            elif choice == '3':
+                FileManager.show_history()
+            elif choice == '4':
+                console.print("[green]Exiting...[/green]")
+                break
+            else:
+                console.print("[red]Invalid option, please try again.[/red]")
+
+    def upload_menu(self):
+        """
+        Obsługuje menu uploadu plików.
+        """
+        file_path = Prompt.ask("[yellow]Enter the path of the file to upload[/yellow]")
+        if file_path:
+            download_link = self.uploader.upload_file(file_path)
+            if download_link:
+                console.print(f"[green]Share this link to download the file:[/green] [cyan]{download_link}[/cyan]")
+
+    def download_menu(self):
+        """
+        Obsługuje menu pobierania plików.
+        """
+        download_link = Prompt.ask("[yellow]Enter the download link[/yellow]")
+        if not download_link:
+            console.print("[red]Download link cannot be empty.[/red]")
+            return
+
+        self.downloader.download_file(download_link)
+
+
+def main():
+    """
+    Główna funkcja uruchamiająca aplikację.
+    """
+    app = FileIOApp()
+    app.main_menu()
+
 
 if __name__ == "__main__":
-    main_menu()
+    main()
