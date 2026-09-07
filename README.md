@@ -2,58 +2,124 @@
 
 # ☁️ File.io Uploader & Downloader
 
-**Python CLI file uploader/downloader for temporary File.io transfers with progress tracking**  
-**Konsolowy uploader i downloader File.io w Pythonie z paskami postępu**
+### Rich-Powered Python CLI for Temporary File Transfers
+
+**Upload • Download • Progress Bars • History • Proxy Support • File.io**
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
-![CLI](https://img.shields.io/badge/UI-CLI-111111)
-![Author](https://img.shields.io/badge/Author-Swir-ff4fa3)
+![Rich](https://img.shields.io/badge/CLI-Rich-ff4fa3)
+![Requests](https://img.shields.io/badge/HTTP-Requests-2ea44f)
+![Platform](https://img.shields.io/badge/Platform-Cross--Platform-111111)
+![Author](https://img.shields.io/badge/Author-Swir-8A2BE2)
 
 </div>
 
 ---
 
-## 🇬🇧 English
+## 🚀 About
 
-File.io Uploader & Downloader is a lightweight Python command-line file transfer utility for uploading and downloading files through the File.io temporary file-sharing service. The project focuses on a straightforward terminal workflow with transfer progress and operation logging.
+**File.io Uploader & Downloader** is a Python command-line utility for uploading and downloading files through the File.io temporary file-sharing service.
 
-### ✨ Features
-- upload files to File.io
-- download files from File.io links
-- upload/download progress bars
-- operation logging
-- ASCII-art startup banner
-- simple interactive terminal menu
+The application uses the `rich` library for a cleaner terminal experience with progress bars, transfer information and history tables. It also includes optional proxy discovery/testing logic and keeps a local history of file-transfer operations.
 
-### 🚀 Installation
+It is designed for users searching for a **File.io uploader**, **File.io downloader**, **Python file transfer CLI**, **temporary file sharing tool**, **Rich progress downloader** or a lightweight terminal-based upload/download utility.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| ☁️ File.io upload | Upload local files to File.io |
+| 📥 File download | Download files from supported links |
+| 📊 Progress display | Rich transfer bars, speed and remaining time |
+| 📜 History | Stores and displays local transfer history |
+| 📁 Download folder | Keeps downloads in a dedicated local directory |
+| 🌐 Proxy helper | Can fetch and test HTTPS proxies |
+| 🎨 Rich terminal UI | Tables, colored messages and interactive prompts |
+| ⚙️ Environment config | Supports configuration through `.env` |
+| 🪶 Lightweight | Runs as a straightforward Python CLI utility |
+
+---
+
+## 📋 Requirements
+
+- Python 3.x
+- Internet connection
+- File.io service availability
+
+Install dependencies:
+
+```bash
+pip install requests rich python-dotenv
+```
+
+---
+
+## 📦 Installation
 
 ```bash
 git clone https://github.com/Swir/File.io_Downloaderup.git
 cd File.io_Downloaderup
-pip install requests tqdm colorama
+pip install requests rich python-dotenv
 python run.py
 ```
 
 ---
 
-## 🇵🇱 Polski
+## 🧠 How It Works
 
-Lekkie narzędzie konsolowe Python do wysyłania i pobierania plików przez usługę tymczasowego udostępniania File.io. Program stawia na prostą obsługę w terminalu, paski postępu oraz rejestrowanie wykonanych operacji.
+```text
+Local File
+   │
+   ▼
+Python CLI
+   │
+   ├── requests
+   ├── rich progress
+   ▼
+File.io
+   │
+   ▼
+Temporary Download Link
+```
 
-### ✨ Funkcje
-- wysyłanie plików do File.io
-- pobieranie plików z linków File.io
-- paski postępu uploadu i downloadu
-- logowanie operacji
-- banner ASCII Art
-- proste menu terminalowe
-
-### 🔎 Discoverability / Keywords
-`file.io uploader` • `file.io downloader` • `python file uploader` • `python file downloader` • `temporary file sharing` • `CLI file transfer` • `tqdm upload progress`
+Transfer history is stored locally in `file_history.txt`. Downloaded files are placed in the application's download directory.
 
 ---
 
-> Availability and behavior of transfers depend on the external File.io service. / Dostępność i działanie transferów zależy od zewnętrznej usługi File.io.
+## 🔧 Configuration
 
-## 👤 Author / Autor
-Developed by **Swir**.
+The program loads environment variables with `python-dotenv`. `FILE_IO_URL` can be configured externally, while the default target is:
+
+```text
+https://file.io
+```
+
+External proxy and hosting services can change independently of this project, so availability is not guaranteed.
+
+---
+
+## 🔍 Discoverability
+
+`file.io uploader` • `file.io downloader` • `python file uploader` • `python download cli` • `temporary file sharing python` • `rich progress bar downloader` • `python file transfer tool` • `terminal uploader` • `requests upload progress` • `file sharing cli`
+
+---
+
+## ⚠️ Privacy & Service Note
+
+Temporary file-sharing services are external services. Do not upload confidential, private or sensitive files unless you understand and accept the provider's current privacy and retention terms.
+
+---
+
+## 👨‍💻 Author
+
+Developed by **Swir** — [@Swir](https://github.com/Swir)
+
+<div align="center">
+
+### ☁️ Simple file transfers with a terminal UI that actually looks good
+
+⭐ **Star the repository if you find it useful!**
+
+</div>
