@@ -2,8 +2,8 @@
 
 # ☁️ File.io Uploader & Downloader
 
-**Python CLI for temporary file transfers with File.io**  
-**Konsolowe narzędzie Python do tymczasowego przesyłania plików przez File.io**
+**Python CLI file uploader/downloader for temporary File.io transfers with progress tracking**  
+**Konsolowy uploader i downloader File.io w Pythonie z paskami postępu**
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
 ![CLI](https://img.shields.io/badge/UI-CLI-111111)
@@ -15,7 +15,7 @@
 
 ## 🇬🇧 English
 
-A lightweight command-line utility for uploading and downloading files through the File.io temporary file-sharing service. The project focuses on a straightforward terminal workflow with transfer progress and operation logging.
+File.io Uploader & Downloader is a lightweight Python command-line file transfer utility for uploading and downloading files through the File.io temporary file-sharing service. The project focuses on a straightforward terminal workflow with transfer progress and operation logging.
 
 ### ✨ Features
 - upload files to File.io
@@ -38,7 +38,7 @@ python run.py
 
 ## 🇵🇱 Polski
 
-Lekkie narzędzie konsolowe do wysyłania i pobierania plików przez usługę tymczasowego udostępniania File.io. Program stawia na prostą obsługę w terminalu, paski postępu oraz rejestrowanie wykonanych operacji.
+Lekkie narzędzie konsolowe Python do wysyłania i pobierania plików przez usługę tymczasowego udostępniania File.io. Program stawia na prostą obsługę w terminalu, paski postępu oraz rejestrowanie wykonanych operacji.
 
 ### ✨ Funkcje
 - wysyłanie plików do File.io
@@ -48,12 +48,10 @@ Lekkie narzędzie konsolowe do wysyłania i pobierania plików przez usługę ty
 - banner ASCII Art
 - proste menu terminalowe
 
-### 🚀 Instalacja
+### 🔎 Discoverability / Keywords
+`file.io uploader` • `file.io downloader` • `python file uploader` • `python file downloader` • `temporary file sharing` • `CLI file transfer` • `tqdm upload progress`
 
-```bash
-pip install requests tqdm colorama
-python run.py
-```
+---
 
 > Availability and behavior of transfers depend on the external File.io service. / Dostępność i działanie transferów zależy od zewnętrznej usługi File.io.
 
