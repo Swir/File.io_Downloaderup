@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">File.io Uploader &amp; Downloader icon</title>
+  <desc id="desc">Electric cyan cloud with upload and download arrows on a dark square.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#02050A"/><stop offset="1" stop-color="#07111C"/></linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0088FF"/><stop offset="1" stop-color="#62E5FF"/></linearGradient>
+  </defs>
+  <rect x="4" y="4" width="248" height="248" rx="52" fill="url(#bg)" stroke="#62E5FF" stroke-opacity=".45" stroke-width="4"/>
+  <path d="M70 157c-22 0-40-17-40-38 0-19 14-34 32-38 8-27 33-46 63-46 34 0 62 24 67 56 19 3 34 19 34 38 0 21-18 38-40 38H70Z" fill="none" stroke="url(#cyan)" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M96 151V98m0 0-18 18m18-18 18 18M160 105v53m0 0-18-18m18 18 18-18" fill="none" stroke="#F4FAFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
