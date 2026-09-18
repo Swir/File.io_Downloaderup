@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">File.io Uploader &amp; Downloader</title>
+  <desc id="desc">SWIR project banner for a Python CLI that uploads and downloads temporary files through File.io.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#02050A"/><stop offset=".55" stop-color="#06101A"/><stop offset="1" stop-color="#02050A"/></linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#0088FF"/><stop offset=".45" stop-color="#62E5FF"/><stop offset="1" stop-color="#0088FF"/></linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#62E5FF" stroke-opacity=".055"/></pattern>
+  </defs>
+  <rect width="1200" height="320" rx="26" fill="url(#bg)"/><rect x="1" y="1" width="1198" height="318" rx="25" fill="none" stroke="#62E5FF" stroke-opacity=".25"/><rect width="1200" height="320" rx="26" fill="url(#grid)"/>
+  <path d="M0 250C180 210 250 300 430 258S720 214 885 248s185 34 315-16" fill="none" stroke="url(#cyan)" stroke-opacity=".24" stroke-width="2"/>
+  <g transform="translate(72 74)"><rect width="150" height="150" rx="30" fill="#07111C" stroke="#62E5FF" stroke-opacity=".5"/><path d="M34 102c-13 0-24-10-24-23 0-11 8-21 19-23 5-16 20-28 38-28 20 0 37 14 40 34 11 2 20 11 20 23 0 12-11 23-24 23H34Z" fill="none" stroke="url(#cyan)" stroke-width="6"/><path d="M52 99V66m0 0-11 11m11-11 11 11M90 70v33m0 0-11-11m11 11 11-11" fill="none" stroke="#F4FAFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <text x="270" y="70" font-family="Segoe UI,Arial,sans-serif" font-size="18" font-weight="700" letter-spacing="4" fill="#62E5FF">SWIR PROJECT</text>
+  <text x="270" y="138" font-family="Segoe UI,Arial,sans-serif" font-size="52" font-weight="800" fill="#F4FAFF">FILE.IO TRANSFER CLI</text>
+  <text x="272" y="186" font-family="Segoe UI,Arial,sans-serif" font-size="24" font-weight="500" fill="#B8D2E0">Temporary uploads, downloads, progress and local history</text>
+  <text x="272" y="230" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="650" letter-spacing="1.5" fill="#62E5FF">PYTHON CLI  •  FILE.IO  •  WINDOWS RELEASE</text>
+  <g transform="translate(1015 242)"><circle r="4" fill="#62E5FF" filter="url(#glow)"/><circle cx="25" r="4" fill="#0088FF"/><circle cx="50" r="4" fill="#62E5FF" opacity=".5"/></g>
+</svg>
