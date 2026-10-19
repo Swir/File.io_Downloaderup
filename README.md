@@ -18,6 +18,12 @@
 
 </div>
 
+## 📸 Screenshot
+
+![File.io_Downloaderup application screenshot](docs/screenshots/application.jpg)
+
+Preview of the actual CLI menu output, exported with Rich and rendered for readability. File transfer and proxy initialization were not run.
+
 <img width="100%" src="https://raw.githubusercontent.com/Swir/Swir/main/assets/power-divider-v4.svg" alt="SWIR electric divider" />
 
 ## 📍 Project Status
